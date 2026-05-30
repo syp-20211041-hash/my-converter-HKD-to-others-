@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>即時匯率換算器 (HKD)</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #95a5a6;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .converter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-box {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+
+        input[type="number"], select {
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            background-color: #fafafa;
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: #e74c3c; /* 香港特色：換成醒目的紅色邊框 */
+            background-color: #fff;
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #fdf2f2; /* 配合紅色的淡色背景 */
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .result-title {
+            font-size: 14px;
+            color: #c0392b;
+            margin: 0 0 5px 0;
+        }
+
+        .result-amount {
+            font-size: 28px;
+            color: #c0392b;
+            font-weight: bold;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>外幣匯率換算器</h1>
+        <p class="subtitle">made by mison choi with ai</p>
+        
+        <div class="converter-group">
+            <!-- 修改為港幣輸入 -->
+            <div class="input-box">
+                <label for="amount">輸入港幣金額 (HKD)</label>
+                <input type="number" id="amount" value="100" min="0" oninput="calculate()">
+            </div>
+
+            <!-- 目標貨幣加入新台幣，移除歐元 -->
+            <div class="input-box">
+                <label for="currency">換算成</label>
+                <select id="currency" onchange="calculate()">
+                    <option value="USD">美金 (USD)</option>
+                    <option value="TWD">新台幣 (TWD)</option>
+                    <option value="JPY">日圓 (JPY)</option>
+                    <option value="KRW">韓元 (KRW)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="result-box">
+            <p class="result-title">換算結果</p>
+            <p class="result-amount" id="resultDisplay">$ 0.00</p>
+        </div>
+    </div>
+
+    <script>
+        // 2026年最新真實市場約計匯率 (1 HKD 可以換多少外幣)
+        const rates = {
+            USD: 0.128,  // 1 HKD ≈ 0.13 USD [1]
+            TWD: 4.15,   // 1 HKD ≈ 4.15 TWD
+            JPY: 20.3,   // 1 HKD ≈ 20.3 JPY
+            KRW: 180.0   // 1 HKD ≈ 180 KRW
+        };
+
+        window.onload = function() {
+            calculate();
+        };
+
+        function calculate() {
+            let hkdAmount = parseFloat(document.getElementById('amount').value);
+            let selectedCurrency = document.getElementById('currency').value;
+            let resultDisplay = document.getElementById('resultDisplay');
+
+            if (isNaN(hkdAmount) || hkdAmount < 0) {
+                resultDisplay.innerText = "$ 0.00";
+                return;
+            }
+
+            let rate = rates[selectedCurrency];
+            let converted = hkdAmount * rate;
+
+            resultDisplay.innerText = `${getCurrencySymbol(selectedCurrency)} ${converted.toFixed(2)}`;
+        }
+
+        function getCurrencySymbol(currency) {
+            if (currency === 'USD') return '$';
+            if (currency === 'TWD') return 'NT$';
+            if (currency === 'JPY') return '¥';
+            if (currency === 'KRW') return '₩';
+            return '';
+        }
+    </script>
+</body>
+</html>
